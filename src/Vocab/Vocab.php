@@ -7,7 +7,6 @@ namespace Yethee\Tiktoken\Vocab;
 use Countable;
 use InvalidArgumentException;
 use OutOfBoundsException;
-use Override;
 use Yethee\Tiktoken\Exception\IOError;
 use Yethee\Tiktoken\Exception\ParseError;
 use Yethee\Tiktoken\Util\EncodeUtil;

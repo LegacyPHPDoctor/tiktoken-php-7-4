@@ -1,3 +1,13 @@
+# tiktoken-php-7-4
+
+⚠️ This repository is a PHP 7.4 compatible fork of [yethee/tiktoken-php](https://github.com/yethee/tiktoken-php).
+
+## Installation
+
+```bash
+$ composer require legacyphpdoctor/tiktoken-php-7-4
+```
+
 # tiktoken-php
 
 ![Packagist Version](https://img.shields.io/packagist/v/yethee/tiktoken)
