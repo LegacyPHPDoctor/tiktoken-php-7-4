@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yethee\Tiktoken\Vocab\Loader;
 
-use Override;
 use Yethee\Tiktoken\Exception\IOError;
 use Yethee\Tiktoken\Vocab\Vocab;
 use Yethee\Tiktoken\Vocab\VocabLoader;
@@ -30,19 +29,22 @@ use const DIRECTORY_SEPARATOR;
 
 final class DefaultVocabLoader implements VocabLoader
 {
+    private string $cacheDir;
+
     /** @param non-empty-string $cacheDir */
-    public function __construct(private readonly string $cacheDir)
+    public function __construct(string $cacheDir)
     {
+        $this->cacheDir = $cacheDir;
     }
 
     #[Override]
-    public function load(string $uri, string|null $checksum = null): Vocab
+    public function load(string $uri, ?string $checksum = null): Vocab
     {
         return Vocab::fromFile($this->loadFile($uri, $checksum));
     }
 
     #[Override]
-    public function loadFile(string $uri, string|null $checksum = null): string
+    public function loadFile(string $uri, ?string $checksum = null): string
     {
         $cacheFile = $this->cacheDir . DIRECTORY_SEPARATOR . sha1($uri);
 
@@ -105,7 +107,7 @@ final class DefaultVocabLoader implements VocabLoader
     }
 
     /** @param string|resource $resource */
-    private function checkHash($resource, string|null $expectedHash): bool
+    private function checkHash($resource, ?string $expectedHash): bool
     {
         if ($expectedHash === null) {
             return true;

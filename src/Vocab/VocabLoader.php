@@ -12,8 +12,9 @@ interface VocabLoader
      * @param non-empty-string $uri
      *
      * @throws IOError
+     * @param string|\Yethee\Tiktoken\Vocab\null $checksum
      */
-    public function load(string $uri, string|null $checksum = null): Vocab;
+    public function load(string $uri, $checksum = null): Vocab;
 
     /**
      * @param non-empty-string $uri
@@ -21,6 +22,7 @@ interface VocabLoader
      * @return non-empty-string
      *
      * @throws IOError
+     * @param string|\Yethee\Tiktoken\Vocab\null $checksum
      */
-    public function loadFile(string $uri, string|null $checksum = null): string;
+    public function loadFile(string $uri, $checksum = null): string;
 }

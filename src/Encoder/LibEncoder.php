@@ -34,20 +34,23 @@ use const PATH_SEPARATOR;
 use const PHP_OS_FAMILY;
 use const PHP_SAPI;
 
-final class LibEncoder implements Encoder, Stringable
+final class LibEncoder implements Encoder
 {
     private const FFI_SCOPE = 'tiktoken';
 
-    private static LibFFIProxy|null $ffi = null;
-    private static string|null $libPath = null;
-    private CData $bpe;
+    private static ?LibFFIProxy $ffi = null;
+    private static ?string $libPath = null;
+    private $bpe;
+    private string $encoding;
 
     /**
      * @param non-empty-string $vocabFile
      * @param non-empty-string $pattern
      */
-    public function __construct(private string $encoding, string $vocabFile, string $pattern)
+    public function __construct(string $encoding, string $vocabFile, string $pattern)
     {
+        $this->encoding = $encoding;
+
         if (! file_exists($vocabFile)) {
             throw new InvalidArgumentException(sprintf('The vocab file %s does not exist', $vocabFile));
         }
@@ -154,7 +157,7 @@ final class LibEncoder implements Encoder, Stringable
                             self::FFI_SCOPE,
                             self::class,
                         ),
-                        previous: $e,
+                        $e,
                     );
                 }
 
@@ -165,12 +168,12 @@ final class LibEncoder implements Encoder, Stringable
         return self::$ffi;
     }
 
-    public static function init(string|null $libPath = null): void
+    public static function init(?string $libPath = null): void
     {
         self::$libPath = $libPath;
     }
 
-    public static function preload(string|null $libPath = null): void
+    public static function preload(?string $libPath = null): void
     {
         self::init($libPath);
 
@@ -208,11 +211,14 @@ final class LibEncoder implements Encoder, Stringable
 
     private static function getLibFile(): string
     {
-        $filename = match (PHP_OS_FAMILY) {
+        $phpOsFamily = [
             'Darwin' => 'libtiktoken_php.dylib',
             'Windows' => 'tiktoken_php.dll',
-            default => 'libtiktoken_php.so',
-        };
+        ];
+        $filename = 'libtiktoken_php.so';
+        if (array_key_exists(PHP_OS_FAMILY, $phpOsFamily)) {
+            $filename = $phpOsFamily[PHP_OS_FAMILY];
+        }
 
         foreach (self::resolveLibPaths() as $path) {
             $libFile = $path . DIRECTORY_SEPARATOR . $filename;

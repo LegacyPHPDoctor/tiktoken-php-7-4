@@ -21,8 +21,10 @@ use function sprintf;
  */
 final class LibFFIProxy
 {
-    public function __construct(private FFI $ffi)
+    private FFI $ffi;
+    public function __construct(FFI $ffi)
     {
+        $this->ffi = $ffi;
     }
 
     /** @param array<mixed> $arguments */
@@ -31,7 +33,10 @@ final class LibFFIProxy
         return $this->ffi->$name(...$arguments);
     }
 
-    public function new(CType|string $type, bool $owned = true, bool $persistent = false): CData
+    /**
+     * @param \FFI\CType|string $type
+     */
+    public function new($type, bool $owned = true, bool $persistent = false): CData
     {
         $data = $this->ffi->new($type, $owned, $persistent);
 

@@ -25,14 +25,26 @@ use function substr;
 use const PHP_INT_MAX;
 
 /** @psalm-import-type NonEmptyByteVector from EncodeUtil */
-final class NativeEncoder implements Encoder, Stringable
+final class NativeEncoder implements Encoder
 {
+    /**
+     * @var non-empty-string
+     */
+    private string $encoding;
+    private Vocab $vocab;
+    /**
+     * @var non-empty-string
+     */
+    private string $pattern;
     /**
      * @param non-empty-string $encoding
      * @param non-empty-string $pattern
      */
-    public function __construct(private string $encoding, private Vocab $vocab, private string $pattern)
+    public function __construct(string $encoding, Vocab $vocab, string $pattern)
     {
+        $this->encoding = $encoding;
+        $this->vocab = $vocab;
+        $this->pattern = $pattern;
     }
 
     #[Override]
@@ -134,7 +146,7 @@ final class NativeEncoder implements Encoder, Stringable
             return '';
         }
 
-        return implode(array_map($this->vocab->getToken(...), $tokens));
+        return implode(array_map(\Closure::fromCallable([$this->vocab, 'getToken']), $tokens));
     }
 
     /**

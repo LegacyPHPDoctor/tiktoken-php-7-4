@@ -19,6 +19,6 @@ final class EncodeUtil
      */
     public static function toBytes(string $text): array
     {
-        return array_map(hexdec(...), str_split(bin2hex($text), 2));
+        return array_map(\Closure::fromCallable('hexdec'), str_split(bin2hex($text), 2));
     }
 }
